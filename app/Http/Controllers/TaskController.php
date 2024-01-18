@@ -6,12 +6,14 @@ use App\Models\Task;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\View\View;
 
 class TaskController extends Controller
 {
     public function index(): JsonResponse
     {
-        $tasks = Task::all();
+        $tasks = Task::orderBy('created_at', 'desc')->get();
         return response()->json($tasks, 200);
     }
 
@@ -28,7 +30,7 @@ class TaskController extends Controller
             ],404);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(Request $request)
     {
         $this->validate(request(), [
             'name' => 'required | max:45',
@@ -69,15 +71,14 @@ class TaskController extends Controller
         }
     }
 
-    public function destroy(Request $request, $id): JsonResponse
+    public function destroy(Request $request, $id)
     {
         if(Task::where('task_id', $id)->exists()) {
             $task = Task::find($id);
             $task->delete();
 
-            return response()->json([
-                "message" => "Task deleted"
-            ],202);
+            session()->flash('success', 'Todo deleted succesfully');
+            return redirect('/');
         }
 
         return response()->json([
@@ -92,7 +93,6 @@ class TaskController extends Controller
                 return false;
             }
         }
-
         return true;
     }
 }
