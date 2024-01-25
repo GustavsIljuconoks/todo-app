@@ -3,14 +3,25 @@
     <div class="a">
 
     <form @submit.prevent="handleTaskUpdate" class="mt-4">
-        <div class="form-group m-3 flex flex-col">
-            <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Todo Name</label>
-            <input
-                v-model="formData.name"
-                type="text"
-                id="name"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            >
+        <div class="w-full flex flex-row gap-3">
+            <div class="form-group m-3 w-full">
+                <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Todo Name</label>
+                <input
+                    v-model="formData.name"
+                    type="text"
+                    id="name"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                >
+            </div>
+            <div class="form-group m-3 w-full">
+                <label for="due_date">Todo due date</label>
+                <input
+                    v-model="formData.due_date"
+                    type="date"
+                    id="due_date"
+                    class="form-control bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                >
+            </div>
         </div>
 
         <div class="form-group m-3 flex flex-col">
@@ -21,15 +32,6 @@
                 id="description"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
             ></textarea>
-        </div>
-        <div class="form-group m-3">
-            <label for="due_date">Todo due date</label>
-            <input
-                v-model="formData.due_date"
-                type="date"
-                id="due_date"
-                class="form-control bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            >
         </div>
         <div class="form-group m-3">
             <button
@@ -43,16 +45,7 @@
 <div class="row mt-3">
     <div class="col-12 align-self-center shadow-lg p-4">
         <div v-for="task in tasks" :key="task.id">
-            <v-app>
-                <v-expansion-panels>
-                    <v-expansion-panel
-                        title="Title"
-                        text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi, ratione debitis quis est labore voluptatibus! Eaque cupiditate minima"
-                    >
-                    </v-expansion-panel>
-                </v-expansion-panels>
-            </v-app>
-            <Task :task="task"/>
+            <Task :task="task" @updateTasks="getTasks"/>
         </div>
 
         <div class="flex flex-row justify-between px-2 py-4">

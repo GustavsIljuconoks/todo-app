@@ -71,14 +71,15 @@ class TaskController extends Controller
         }
     }
 
-    public function destroy(Request $request, $id)
+    public function destroy(Request $request, $id): JsonResponse
     {
         if(Task::where('task_id', $id)->exists()) {
             $task = Task::find($id);
             $task->delete();
 
-            session()->flash('success', 'Todo deleted succesfully');
-            return redirect('/');
+            return response()->json([
+                "success" => "Todo deleted succesfully"
+            ],200);
         }
 
         return response()->json([
