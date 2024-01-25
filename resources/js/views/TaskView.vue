@@ -36,8 +36,8 @@
 
     import axios from "axios";
     import { onMounted, ref } from "vue";
-    const props = defineProps(['id']);
     import { useRouter } from 'vue-router'
+    const props = defineProps(['id']);
 
     const router = useRouter();
     let task = ref([]);

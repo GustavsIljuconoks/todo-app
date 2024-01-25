@@ -8,7 +8,7 @@
                 <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                     Sign in to your account
                 </h1>
-                <form @submit.prevent="register" class="space-y-4 md:space-y-6">
+                <form @submit.prevent="login" class="space-y-4 md:space-y-6">
                     <div class="form-group w-full">
                         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
                         <input
@@ -66,9 +66,11 @@
         password: '',
     });
 
-    const register = async () => {
+    const login = async () => {
         try {
             const response = await axios.post('api/login/', formData.value);
+            localStorage.setItem('userToken', response.data.token);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
             router.push({ name: 'home' });
         } catch (error) {
             console.error('Error registering user:', error);

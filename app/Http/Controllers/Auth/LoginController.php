@@ -60,7 +60,7 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        auth('sanctum')->user()->tokens()->delete();
+        auth()->user()->tokens()->delete();
 
         return response()->json([
             "message" => "user logged out"
