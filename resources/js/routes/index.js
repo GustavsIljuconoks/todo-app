@@ -1,6 +1,8 @@
 import {createRouter, createWebHistory} from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import TaskView from "../views/TaskView.vue";
+import RegisterView from "../views/RegisterView.vue";
+import LoginView from "../views/LoginView.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,6 +17,16 @@ const router = createRouter({
             name: 'details',
             component: TaskView,
             props: true
+        },
+        {
+            path: '/register',
+            name: 'register',
+            component: RegisterView,
+        },
+        {
+            path: '/login',
+            name: 'login',
+            component: LoginView,
         },
     ]
 })
