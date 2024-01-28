@@ -49,12 +49,12 @@
 
                 <div class="flex flex-row justify-between px-2 py-4">
 
-                    <p>{{ tasks.length }} items</p>
+                    <p>{{ countTasksActive }} items</p>
 
                     <div class="flex gap-4">
-                        <a class="text-purple-700" href="#">All</a>
-                        <a href="#">Active</a>
-                        <a href="#">Completed</a>
+                        <a class="text-purple-700" href="#" @click="getTasks">Active</a>
+                        <a href="#" @click="getCompletedTasks">Completed</a>
+                        <a href="#" @click="getAll">All</a>
                     </div>
 
                     <div class="flex">
@@ -71,7 +71,7 @@
 
 <script setup lang="ts">
     import axios from "axios";
-    import { onMounted, ref } from "vue";
+    import { onMounted, ref, computed } from "vue";
     import Task from "../components/Task.vue";
 
     let tasks = ref([]);
@@ -89,6 +89,14 @@
         due_date: ''
     });
 
+    onMounted(async () => {
+        await getTasks();
+    });
+
+    const countTasksActive = computed(() => {
+        return (tasks.value.filter(task => task.completed === 0).length);
+    });
+
     const getTasks = async () => {
         const userToken = localStorage.getItem('userToken');
         try {
@@ -99,10 +107,27 @@
         }
     };
 
-    onMounted(async () => {
-        await getTasks();
-    });
+    const getCompletedTasks = async () => {
+        const userToken = localStorage.getItem('userToken');
 
+        try {
+            const response = await axios.post('http://127.0.0.1:8000/api/tasks-completed', { userToken });
+            console.log(response.data);
+            tasks.value = response.data;
+        } catch (error) {
+            console.error('Error fetching tasks:', error);
+        }
+    }
+
+    const getAll = async () => {
+        const userToken = localStorage.getItem('userToken');
+        try {
+            const response = await axios.post('http://127.0.0.1:8000/api/tasks-all', { userToken });
+            tasks.value = response.data;
+        } catch (error) {
+            console.error('Error fetching tasks:', error);
+        }
+    }
 
     const handleTaskUpdate = async () => {
         try {

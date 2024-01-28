@@ -20,7 +20,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/get-tasks/', [TaskController::class, 'index'])->name('task.get');
+Route::post('/get-tasks/', [TaskController::class, 'index'])->name('task.undone');
+Route::post('/tasks-completed/', [TaskController::class, 'getCompleted'])->name('task.completed');
+Route::post('/tasks-all/', [TaskController::class, 'getAll'])->name('task.all');
 //Route::post('/get-tasks/{token}', [TaskController::class, 'index'])->name('task.get');
 Route::get('/tasks/{id}', [TaskController::class, 'show']);
 Route::post('/tasks', [TaskController::class, 'store'])->name('task.create');

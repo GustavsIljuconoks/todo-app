@@ -20,6 +20,31 @@ class TaskController extends Controller
         $this->user = $token->tokenable_id;
 
         $tasks = Task::where('user_id', $this->user)
+            ->where('completed', 0)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return response()->json($tasks, 200);
+    }
+
+    public function getCompleted(Request $request)
+    {
+        $token = PersonalAccessToken::findToken($request->userToken);
+        $this->user = $token->tokenable_id;
+
+
+        $tasks = Task::where('user_id', $this->user)
+            ->where('completed', 1)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return response()->json($tasks, 200);
+    }
+
+    public function getAll(Request $request)
+    {
+        $token = PersonalAccessToken::findToken($request->userToken);
+        $this->user = $token->tokenable_id;
+
+        $tasks = Task::where('user_id', $this->user)
             ->orderBy('created_at', 'desc')
             ->get();
         return response()->json($tasks, 200);

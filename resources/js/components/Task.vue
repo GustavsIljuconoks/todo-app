@@ -15,7 +15,7 @@
                 </button>
 
                 <router-link :to="{ name: 'details', params: {id: task.task_id}}">
-                    <p :class="dynamicClass" >{{ task.name }}</p>
+                    <p :class="dynamicClass">{{ task.name }}</p>
                 </router-link>
             </div>
 
