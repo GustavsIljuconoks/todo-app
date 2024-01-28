@@ -81,6 +81,20 @@ class TaskController extends Controller
         }
     }
 
+    public function updateTaskCompleted(Request $request, $id)
+    {
+        if (Task::where('task_id', $id)->exists()) {
+            $task = Task::find($id);
+
+            $task->update(['completed' => '1']);
+
+            return response()->json([
+                "data" => $task,
+                "message" => "Task updated successfully"
+            ], 200);
+        }
+    }
+
     public function destroy(Request $request, $id): JsonResponse
     {
         if(Task::where('task_id', $id)->exists()) {
