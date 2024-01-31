@@ -2,7 +2,7 @@
     <header class="bg-white">
         <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
             <div class="flex lg:flex-1">
-                <a href="#" class="-m-1.5 p-1.5 font-bold text-2xl">
+                <a href="/" class="-m-1.5 p-1.5 font-bold text-2xl">
                     Todo App
                 </a>
             </div>
@@ -35,7 +35,6 @@
 
     const router = useRouter();
     const userToken = localStorage.getItem('userToken')
-    console.log(userToken)
 
     const userLogout = async () => {
         const csrfToken = document.head.querySelector('meta[name="csrf-token"]').content;

@@ -7,7 +7,7 @@
 <template>
     <div v-if="userToken" class="page-content font-medium">
         <div class="a">
-            <form @submit.prevent="handleTaskUpdate" class="mt-4">
+            <form @submit.prevent="handleTaskCreate" class="mt-4">
                 <div class="w-full flex flex-row gap-3">
                     <div class="form-group m-3 w-full">
                         <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Todo Name</label>
@@ -16,6 +16,7 @@
                             type="text"
                             id="name"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                            required
                         >
                     </div>
                     <div class="form-group m-3 w-full">
@@ -25,6 +26,7 @@
                             type="date"
                             id="due_date"
                             class="form-control bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                            required
                         >
                     </div>
                 </div>
@@ -36,6 +38,7 @@
                         type="text"
                         id="description"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        required
                     ></textarea>
                 </div>
                 <div class="form-group m-3">
@@ -87,18 +90,13 @@
     import SortDropdown from "../components/SortDropdown.vue";
     import Dropdown from "../components/SortDropdown.vue";
     import SearchInput from "../components/SearchInput.vue";
+    import IFormData from "../globals";
 
     let tasks = ref([]);
     const userToken = localStorage.getItem('userToken')
     const activeLink = ref('');
 
-    interface FormData {
-        name: string,
-        description: string,
-        due_date: string
-    }
-
-    const formData = ref<FormData>({
+    const formData = ref<IFormData>({
         name: '',
         description: '',
         due_date: ''
@@ -148,21 +146,15 @@
         }
     }
 
-    const handleTaskUpdate = async () => {
+    const handleTaskCreate = async () => {
         try {
-            const updatedFormData = {
-                name: formData.value.name + ' (Updated)',
+            const response = await axios.post('api/tasks/', {
+                name: formData.value.name,
                 description: formData.value.description,
-                due_date: formData.value.due_date
-            };
+                due_date: formData.value.due_date,
+                userToken: localStorage.getItem('userToken')
+            });
 
-
-                const response = await axios.post('api/tasks/', {
-                    name: formData.value.name,
-                    description: formData.value.description,
-                    due_date: formData.value.due_date,
-                    userToken: localStorage.getItem('userToken')
-                });
             await getTasks();
 
             // Reset form fields
@@ -171,7 +163,6 @@
                 description: '',
                 due_date: ''
             };
-
         } catch (error) {
             console.error('Error submitting form:', error);
         }
