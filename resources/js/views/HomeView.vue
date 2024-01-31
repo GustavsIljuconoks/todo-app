@@ -1,3 +1,9 @@
+<style scoped>
+    .active-link {
+        color: #7E22CEFF;
+    }
+</style>
+
 <template>
     <div v-if="userToken" class="page-content font-medium">
         <div class="a">
@@ -41,24 +47,29 @@
             </form>
         </div>
 
+        <div class="flex flex-col gap-20 justify-start sm:flex-row sm:justify-between">
+            <search-input :tasks="tasks" @filterByName="updateFilteredByName"/>
+            <dropdown :tasks="tasks" @updateTasks="getTasks" @sort-data="updateSortedData"/>
+        </div>
+
         <div class="row mt-3">
             <div class="col-12 align-self-center shadow-lg p-4">
-                <div v-for="task in tasks" :key="task.id">
+                <div v-for="task in tasks" :key="task.task_id">
                     <Task :task="task" @updateTasks="getTasks"/>
                 </div>
 
-                <div class="flex flex-row justify-between px-2 py-4">
+                <div class="flex flex-col md:flex-row justify-between px-2 py-4">
 
                     <p>{{ countTasksActive }} items</p>
 
-                    <div class="flex gap-4">
-                        <a class="text-purple-700" href="#" @click="getTasks">Active</a>
-                        <a href="#" @click="getCompletedTasks">Completed</a>
-                        <a href="#" @click="getAll">All</a>
+                    <div class="flex gap-4 order-first md:order-none">
+                        <a :class="{ 'active-link': activeLink === 'active'}" href="#" @click="getTasks">Active</a>
+                        <a :class="{ 'active-link': activeLink === 'completed' }" href="#" @click="getCompletedTasks">Completed</a>
+                        <a :class="{ 'active-link': activeLink === 'all' }" href="#" @click="getAll">All</a>
                     </div>
 
                     <div class="flex">
-                        <a href="#">Clear completed</a>
+                        <a href="#" >Clear completed</a>
                     </div>
                 </div>
             </div>
@@ -73,9 +84,13 @@
     import axios from "axios";
     import { onMounted, ref, computed } from "vue";
     import Task from "../components/Task.vue";
+    import SortDropdown from "../components/SortDropdown.vue";
+    import Dropdown from "../components/SortDropdown.vue";
+    import SearchInput from "../components/SearchInput.vue";
 
     let tasks = ref([]);
     const userToken = localStorage.getItem('userToken')
+    const activeLink = ref('');
 
     interface FormData {
         name: string,
@@ -99,6 +114,8 @@
 
     const getTasks = async () => {
         const userToken = localStorage.getItem('userToken');
+        activeLink.value = 'active';
+
         try {
             const response = await axios.post('http://127.0.0.1:8000/api/get-tasks', { userToken });
             tasks.value = response.data;
@@ -109,10 +126,10 @@
 
     const getCompletedTasks = async () => {
         const userToken = localStorage.getItem('userToken');
+        activeLink.value = 'completed';
 
         try {
             const response = await axios.post('http://127.0.0.1:8000/api/tasks-completed', { userToken });
-            console.log(response.data);
             tasks.value = response.data;
         } catch (error) {
             console.error('Error fetching tasks:', error);
@@ -121,6 +138,8 @@
 
     const getAll = async () => {
         const userToken = localStorage.getItem('userToken');
+        activeLink.value = 'all';
+
         try {
             const response = await axios.post('http://127.0.0.1:8000/api/tasks-all', { userToken });
             tasks.value = response.data;
@@ -158,4 +177,12 @@
         }
     };
 
+
+    const updateSortedData = (sortedData) => {
+        tasks.value = sortedData
+    }
+
+    const updateFilteredByName = (filteredByName) => {
+        tasks.value = filteredByName
+    }
 </script>
