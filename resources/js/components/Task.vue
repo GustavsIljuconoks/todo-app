@@ -2,6 +2,18 @@
     .done {
         text-decoration: line-through;
     }
+
+    .low {
+        background-color: #004080;
+    }
+
+    .medium {
+        background-color: #f6aa0e;
+    }
+
+    .urgent {
+        background-color: #ec6060;
+    }
 </style>
 
 <template>
@@ -15,12 +27,16 @@
                         </svg>
                     </DisclosureButton>
 
-                    <router-link :to="{ name: 'details', params: {id: task.task_id}}">
-                        <p :class="dynamicClass">{{ task.name }}</p>
+                    <router-link :to="{ name: 'details', params: {id: task.task_id}, query: { task: task }}">
+                        <p :class="taskCompleted">{{ task.name }}</p>
                     </router-link>
                 </div>
 
-                <div class="flex gap-4">
+                <div class="flex gap-4 items-center">
+
+                    <div :class="priority" class="w-5 h-5 rounded-full">
+                    </div>
+
                     <input type="checkbox" class="checkbox" @click="completeTask(task.task_id)" v-model="isChecked">
 
                     <form @submit.prevent="handleTaskDelete(task.task_id)" >
@@ -49,9 +65,17 @@
     const emit = defineEmits(['updateTasks'])
 
     let isChecked = ref(false);
-    const dynamicClass = computed(() => {
+    const taskCompleted = computed(() => {
         return {
             'done': isChecked.value || props.task.completed == 1
+        };
+    });
+
+    const priority = computed(() => {
+        return {
+            urgent: props.task.priorities_id == 1,
+            medium: props.task.priorities_id == 2,
+            low: props.task.priorities_id == 3,
         };
     });
 

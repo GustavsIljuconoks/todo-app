@@ -72,6 +72,7 @@ class TaskController extends Controller
             'name' => 'required | max:45',
             'description' => 'required | max:255',
             'due_date' => 'required',
+            'priorities_id' => 'required',
         ]);
 
         $postData = $request->post();
@@ -84,6 +85,7 @@ class TaskController extends Controller
         $task->name = $validatedData['name'];
         $task->description = $validatedData['description'];
         $task->due_date = $validatedData['due_date'];
+        $task->priorities_id = $validatedData['priorities_id'];
         $task->user_id = $this->user;
         $task->save();
 
