@@ -1,3 +1,13 @@
+<style scoped>
+    .show {
+        display: block;
+    }
+
+    .hide {
+        display: none;
+    }
+</style>
+
 <template>
     <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
         <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
@@ -8,6 +18,11 @@
                 <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                     Sign in to your account
                 </h1>
+
+                <div v-if="error" :class="{ 'show': showError, 'hide': showError == false }" class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50" role="alert" >
+                    <span class="font-medium">{{ error }}</span>
+                </div>
+
                 <form @submit.prevent="login" class="space-y-4 md:space-y-6">
                     <div class="form-group w-full">
                         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
@@ -18,6 +33,7 @@
                             id="email"
                             placeholder="janis@gmail.com"
                             class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                            required
                         >
                     </div>
                     <div class="form-group w-full">
@@ -29,6 +45,7 @@
                             id="password"
                             placeholder="••••••••"
                             class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                            required
                         >
                     </div>
                     <button
@@ -55,6 +72,8 @@
     import { useRouter } from "vue-router";
 
     const router = useRouter();
+    const error = ref(null);
+    const showError = ref(true);
 
     interface FormData {
         email: string,
@@ -72,8 +91,18 @@
             localStorage.setItem('userToken', response.data.token);
             axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
             router.push({ name: 'home' });
-        } catch (error) {
-            console.error('Error registering user:', error);
+        } catch (e) {
+            error.value = e.response.data.message || 'An error occurred.';
+
+            showError.value = true;
+            setTimeout(() => {
+                showError.value = false;
+            }, 2000);
         }
+
+        formData.value = {
+            email: '',
+            password: '',
+        };
     };
 </script>
