@@ -2,14 +2,33 @@
     .active-link {
         color: #7E22CEFF;
     }
+
+    input[type="radio"] {
+        accent-color: auto;
+        display: block;
+        width: 33px;
+        height: 33px;
+    }
+
+    input.low {
+        accent-color: #004080;
+    }
+
+    input.medium {
+        accent-color: #f6aa0e;
+    }
+
+    input.urgent {
+        accent-color: #ec6060;
+    }
 </style>
 
 <template>
     <div v-if="userToken" class="page-content font-medium">
-        <div class="a">
-            <form @submit.prevent="handleTaskCreate" class="mt-4">
+        <div class="m-3">
+            <form @submit.prevent="handleTaskCreate" class="mt-4 flex flex-col gap-2">
                 <div class="w-full flex flex-row gap-3">
-                    <div class="form-group m-3 w-full">
+                    <div class="form-group w-full">
                         <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Todo Name</label>
                         <input
                             v-model="formData.name"
@@ -19,7 +38,7 @@
                             required
                         >
                     </div>
-                    <div class="form-group m-3 w-full">
+                    <div class="form-group w-full">
                         <label for="due_date">Todo due date</label>
                         <input
                             v-model="formData.due_date"
@@ -31,7 +50,7 @@
                     </div>
                 </div>
 
-                <div class="form-group m-3 flex flex-col">
+                <div class="form-group flex flex-col">
                     <label for="description" class="block mb-2 text-sm font-medium text-gray-900">Todo Description</label>
                     <textarea
                         v-model="formData.description"
@@ -41,6 +60,28 @@
                         required
                     ></textarea>
                 </div>
+
+                <div class="flex flex-col">
+                    <label for="description" class="block mb-2 text-sm font-medium text-gray-900">Todo priorities</label>
+
+                    <div class="flex flex-row justify-between">
+                        <label>
+                            <input type="radio" name="priorities" class="low" value="3" v-model="formData.priorities_id"/>
+                            Low
+                        </label>
+
+                        <label>
+                            <input type="radio" name="priorities" class="medium" value="2" v-model="formData.priorities_id"/>
+                            Medium
+                        </label>
+
+                        <label>
+                            <input type="radio" name="priorities" class="urgent" value="1" v-model="formData.priorities_id"/>
+                            Urgent
+                        </label>
+                    </div>
+                </div>
+
                 <div class="form-group m-3">
                     <button
                         type="submit"
@@ -52,7 +93,7 @@
 
         <div class="flex flex-col gap-20 justify-start sm:flex-row sm:justify-between">
             <search-input :tasks="tasks" @filterByName="updateFilteredByName"/>
-            <dropdown :tasks="tasks" @updateTasks="getTasks" @sort-data="updateSortedData"/>
+            <sort-dropdown :tasks="tasks" @updateTasks="getTasks" @sort-data="updateSortedData"/>
         </div>
 
         <div class="row mt-3">
@@ -88,7 +129,6 @@
     import { onMounted, ref, computed } from "vue";
     import Task from "../components/Task.vue";
     import SortDropdown from "../components/SortDropdown.vue";
-    import Dropdown from "../components/SortDropdown.vue";
     import SearchInput from "../components/SearchInput.vue";
     import IFormData from "../globals";
 
@@ -99,7 +139,8 @@
     const formData = ref<IFormData>({
         name: '',
         description: '',
-        due_date: ''
+        due_date: '',
+        priorities_id: ''
     });
 
     onMounted(async () => {
@@ -141,6 +182,7 @@
         try {
             const response = await axios.post('http://127.0.0.1:8000/api/tasks-all', { userToken });
             tasks.value = response.data;
+            console.log(tasks);
         } catch (error) {
             console.error('Error fetching tasks:', error);
         }
@@ -148,10 +190,12 @@
 
     const handleTaskCreate = async () => {
         try {
+            console.log(formData.value.priorities_id)
             const response = await axios.post('api/tasks/', {
                 name: formData.value.name,
                 description: formData.value.description,
                 due_date: formData.value.due_date,
+                priorities_id: formData.value.priorities_id,
                 userToken: localStorage.getItem('userToken')
             });
 
