@@ -1,4 +1,4 @@
-<style scoped>
+<style>
     .active-link {
         color: #7E22CEFF;
     }
@@ -148,7 +148,7 @@
     });
 
     const countTasksActive = computed(() => {
-        return (tasks.value.filter(task => task.completed === 0).length);
+        return (tasks.value.filter((task) => task.completed === 0).length);
     });
 
     const getTasks = async () => {

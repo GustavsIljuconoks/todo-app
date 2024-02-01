@@ -27,7 +27,7 @@
                         </svg>
                     </DisclosureButton>
 
-                    <router-link :to="{ name: 'details', params: {id: task.task_id}}">
+                    <router-link :to="{ name: 'details', params: {id: task.task_id}, query: { task: task }}">
                         <p :class="taskCompleted">{{ task.name }}</p>
                     </router-link>
                 </div>
