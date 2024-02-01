@@ -96,7 +96,7 @@
     const register = async () => {
         try {
             const response = await axios.post('api/register/', formData.value);
-            router.push({ name: 'home' });
+            router.push({ name: 'login' });
         } catch (error) {
             console.error('Error registering user:', error);
         }

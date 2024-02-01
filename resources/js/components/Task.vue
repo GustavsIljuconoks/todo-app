@@ -16,7 +16,7 @@
                     </DisclosureButton>
 
                     <router-link :to="{ name: 'details', params: {id: task.task_id}}">
-                        <p :class="{ 'done': isChecked.value, 'done': task.completed == 1}">{{ task.name }}</p>
+                        <p :class="dynamicClass">{{ task.name }}</p>
                     </router-link>
                 </div>
 
@@ -43,16 +43,16 @@
 
 <script setup>
     import axios from "axios";
-    import { ref, computed } from "vue";
+    import { ref, computed, reactive } from "vue";
     import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
-    defineProps(['task'])
+    const props = defineProps(['task'])
     const emit = defineEmits(['updateTasks'])
 
     let isChecked = ref(false);
     const dynamicClass = computed(() => {
         return {
-            'done': isChecked.value
-        }
+            'done': isChecked.value || props.task.completed == 1
+        };
     });
 
     const handleTaskDelete = async (id) => {
